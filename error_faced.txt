@@ -1,0 +1,3 @@
+1. during postgres connection:
+    psycopg-binary is not enough. gives error during runserver. 
+    run pip install psycopg2 to solve the error. 

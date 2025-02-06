@@ -1,0 +1,5 @@
+1. be careful about gitignore file. 
+    a. node_modules of tailwind integration must be listed in gitignore
+2. dont forget about build and watch tailwind. if not works=> ctrl+shift+r for hard reload
+3. be careful about template file path and overall spelling of file names. 
+4. whenever work on models . py file,, migrate
