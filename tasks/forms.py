@@ -1,4 +1,5 @@
 from django import forms
+from tasks.models import Task
 
 class TaskForm(forms.Form):
     title=forms.CharField(max_length=250)
@@ -19,3 +20,15 @@ class TaskForm(forms.Form):
         #all these field are stored in a  dictionary
         # print(self.fields)
         self.fields['assigned_to'].choices=[(emp.id,emp.name) for emp in employees]
+    
+class TaskModelForm(forms.ModelForm):
+    class Meta:
+        model=Task
+        fields=['title','description','due_date','assigned_to']
+
+        widgets={'title':forms.TextInput(attrs={'class':'w-full border-2 border-gray-500 rounded-lg shadow-sm','placeholder':'title'}),
+            'description':forms.Textarea(attrs={'placeholder':'title','class':'w-full border-2 border-gray-500 rounded-lg shadow-sm'}),
+            'due_date':forms.SelectDateWidget(attrs={
+                'class':'w-full border-2 border-gray-500 rounded-lg shadow-sm'
+            }),
+                 'assigned_to':forms.CheckboxSelectMultiple}
