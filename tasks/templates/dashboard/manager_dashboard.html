@@ -3,6 +3,13 @@
 {% block tasks %}
 <!-- all task section -->
 <div class="all_task bg-white  rounded-lg p-3 mt-3">
+    <div>
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{message}}</p>
+            {% endfor %}
+        {% endif %}
+    </div>
             
     <div class="all_task_body grid grid-cols-4 gap-1 text-sm">
         <!-- <div class="task_body_heading"></div> -->
@@ -11,96 +18,39 @@
          <p>TEAM</p>
          <p>CREATED AT</p>
     </div>
+    {% for task in tasks %}
     <div class="grid grid-cols-4 gap-2 text-xs mt-2">
 
         <div class="flex items-center gap-1">
            <div class="list_style w-1 h-1 bg-green-600 rounded-full "></div>
-           <p>Test Low Task</p>
+           <p>{{task.title}}</p>
         </div>
         <div class="flex items-center">
            <div class=" bg-blue-200 w-fit p-0.5 rounded-md ">
-               <p>Low</p>
+               <p>{{task.details.get_priority_display}}</p>
 
            </div>
         </div>
         <div class="flex gap-1 text-center -space-x-3 text-white">
-           
-            <div class="list_style w-6 h-6 bg-green-600 rounded-full border border-white self-center flex items-center justify-center ">
-                 <p >CA</p>
-             </div>
-            <div class="list_style w-6 h-6 bg-green-600 rounded-full border border-white self-center flex items-center justify-center ">
-                 <p >JS</p>
-             </div>
-            <div class="list_style w-6 h-6 bg-green-600 rounded-full border border-white self-center flex items-center justify-center ">
-                 <p >B</p>
-             </div>
+            {% for emp in task.assigned_to.all %}
+                <div class="list_style w-6 h-6 bg-green-600 rounded-full border border-white self-center flex items-center justify-center ">
+                    <p >{{emp.name|slice:':2'}}</p>
+                </div>
+             {% endfor %}
+            
             
          </div>
         <div class="flex items-center">
 
-            <p>9 months ago</p>
+            <p>{{task.created_at|timesince}}</p>
+            <a href="{% url 'update-task' task.id %}">Update</a>
+            <form action="{% url 'delete-task' task.id %}" method="POST">
+                {% csrf_token %}
+                <button type="submit">DELETE</button>
+            </form>
         </div>
     </div>
-    <div class="grid grid-cols-4 gap-2 text-xs mt-3 ">
-
-        <div class="flex items-center gap-1">
-           <div class="list_style w-1 h-1 bg-green-600 rounded-full "></div>
-           <p>Test Task</p>
-        </div>
-        <div class="flex items-center">
-           <div class=" bg-blue-200 w-fit p-0.5 rounded-md ">
-               <p>Medium</p>
-
-           </div>
-        </div>
-        <div class="flex gap-1 text-center -space-x-3 text-white">
-           
-            <div class="list_style w-6 h-6 bg-blue-600 rounded-full border border-white self-center flex items-center justify-center ">
-                 <p >CA</p>
-             </div>
-            <div class="list_style w-6 h-6 bg-blue-600 rounded-full border border-white self-center flex items-center justify-center ">
-                 <p >JS</p>
-             </div>
-            <div class="list_style w-6 h-6 bg-blue-600 rounded-full border border-white self-center flex items-center justify-center ">
-                 <p >B</p>
-             </div>
-            
-         </div>
-        <div class="flex items-center">
-
-            <p>9 months ago</p>
-        </div>
-    </div>
-    <div class="grid grid-cols-4 gap-2 text-xs mt-3 ">
-
-        <div class="flex items-center gap-1">
-           <div class="list_style w-1 h-1 bg-green-600 rounded-full "></div>
-           <p>Test Low Task</p>
-        </div>
-        <div class="flex items-center">
-           <div class=" bg-blue-200 w-fit p-0.5 rounded-md ">
-               <p>Low</p>
-
-           </div>
-        </div>
-        <div class="flex gap-1 text-center -space-x-3 text-white">
-           
-           <div class="list_style w-6 h-6 bg-blue-500 rounded-full border border-white self-center flex items-center justify-center ">
-                <p >CA</p>
-            </div>
-           <div class="list_style w-6 h-6 bg-blue-500 rounded-full border border-white self-center flex items-center justify-center ">
-                <p >JS</p>
-            </div>
-           <div class="list_style w-6 h-6 bg-blue-500 rounded-full border border-white self-center flex items-center justify-center ">
-                <p >B</p>
-            </div>
-           
-        </div>
-        <div class="flex items-center">
-
-            <p>9 months ago</p>
-        </div>
-    </div>
+    {% endfor %}
     
 </div>
 {% endblock tasks %}

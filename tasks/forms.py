@@ -1,5 +1,5 @@
 from django import forms
-from tasks.models import Task
+from tasks.models import Task,TaskDetail
 
 class TaskForm(forms.Form):
     title=forms.CharField(max_length=250)
@@ -26,9 +26,19 @@ class TaskModelForm(forms.ModelForm):
         model=Task
         fields=['title','description','due_date','assigned_to']
 
-        widgets={'title':forms.TextInput(attrs={'class':'w-full border-2 border-gray-500 rounded-lg shadow-sm','placeholder':'title'}),
+        widgets={'title':forms.TextInput(attrs={'class':'w-full border-2 border-gray-500 rounded-lg shadow-sm ','placeholder':'title'}),
             'description':forms.Textarea(attrs={'placeholder':'title','class':'w-full border-2 border-gray-500 rounded-lg shadow-sm'}),
             'due_date':forms.SelectDateWidget(attrs={
                 'class':'w-full border-2 border-gray-500 rounded-lg shadow-sm'
             }),
                  'assigned_to':forms.CheckboxSelectMultiple}
+        
+class TaskDetailModelForm(forms.ModelForm):
+    class Meta:
+        model=TaskDetail
+        fields=['priority','notes']
+
+        widgets={
+            'priority':forms.Select(attrs={'class':'border-2 border-gray-500 rounded-lg shadow-sm'}),
+            'notes':forms.Textarea(attrs={'class':'w-full border-2 border-gray-500 rounded-lg shadow-sm'})
+        }

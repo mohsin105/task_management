@@ -4,6 +4,7 @@ from django.db import models
 
 class Project(models.Model):
     name=models.CharField(max_length=250)
+    description = models.TextField(blank=True, null=True)
     start_date=models.DateField()
 
     def __str__(self):
@@ -17,9 +18,15 @@ class Employee(models.Model):
         return self.name
 
 class Task(models.Model):
+    STATUS_CHOICES=[
+        ('PENDING','Pending'),
+        ('IN_PROGRESS','In Progress'),
+        ('COMPLETED','Completed')
+    ]
     project=models.ForeignKey(Project,on_delete=models.CASCADE, default=1,related_name='task_list')
     assigned_to=models.ManyToManyField(Employee,related_name='tasks')
     # manytomany field value is not needed to be provided when creating object in shell
+    status=models.CharField(max_length=15,choices=STATUS_CHOICES, default="PENDING")
     title=models.CharField(max_length=250)
     description=models.TextField()
     due_date=models.DateField()
@@ -42,8 +49,9 @@ class TaskDetail(models.Model):
     task=models.OneToOneField(Task,on_delete=models.CASCADE,related_name='details')
     # task field takes a Task object as value, not the id of Task object, when creating a taskdeatil object using shell
     # but in vs code, during model declaration, default= key argument takes the id of object, not object itself.
-    assigned_to=models.CharField(max_length=250)
+    # assigned_to=models.CharField(max_length=250)
     priority=models.CharField(max_length=1,choices=PRIORITY_OPTIONS,default=LOW)
+    notes=models.TextField(blank=True,null=True)
 
     def __str__(self):
-        return self.priority
+        return f'Details for task {self.task.title}'
