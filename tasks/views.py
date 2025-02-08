@@ -5,9 +5,7 @@ from tasks.models import Employee,Task
 from django.db.models import Q,Count
 from django.contrib import messages
 # Create your views here.
-def home(request):
-    # return HttpResponse("This is the task management website home page!")
-    return render(request,'home.html')
+
 
 def dashboard(request):
     return render(request,'dashboard/dashboard.html')

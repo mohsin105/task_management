@@ -12,6 +12,16 @@
     <div class="test_div">
 
         <h3>Simple and seamless solution to handle your tasks</h3>
+
     </div>
+    {% if user.is_authenticated %}
+        <p>{{user}}</p>
+        <form action="{% url 'logout' %}" method="POST">
+            {% csrf_token %}
+            <button type="submit">Log Out</button>
+        </form>
+    {% else %}
+    <p>Annonymous</p>
+    {% endif %}
 </body>
 </html>
