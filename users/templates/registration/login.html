@@ -7,10 +7,24 @@
 </head>
 <body>
     <div>
+        {% comment %} for non-field errors {% endcomment %}
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <p>{{error}}</p>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div>
+        {% if messages %}
+            {% for message in messages %}
+            <p>{{message}}</p>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div>
         <form action="" method="POST">
             {% csrf_token %}
-            <input type="text" placeholder="username" name="username">
-            <input type="password" placeholder="password" name="password">
+            {{form.as_p}}
             <button type="submit">Submit</button>
         </form>
     </div>

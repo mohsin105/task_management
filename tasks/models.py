@@ -1,4 +1,7 @@
 from django.db import models
+from django.db.models.signals import post_save,pre_save,m2m_changed,post_delete
+from django.dispatch import receiver
+from django.core.mail import send_mail
 
 # Create your models here.
 
@@ -46,7 +49,7 @@ class TaskDetail(models.Model):
                       (MEDIUM,'Medium'),
                       (LOW,'Low'))
     
-    task=models.OneToOneField(Task,on_delete=models.CASCADE,related_name='details')
+    task=models.OneToOneField(Task,on_delete=models.DO_NOTHING,related_name='details')
     # task field takes a Task object as value, not the id of Task object, when creating a taskdeatil object using shell
     # but in vs code, during model declaration, default= key argument takes the id of object, not object itself.
     # assigned_to=models.CharField(max_length=250)
@@ -55,3 +58,52 @@ class TaskDetail(models.Model):
 
     def __str__(self):
         return f'Details for task {self.task.title}'
+
+# Signals
+
+# @receiver(post_save,sender=Task)
+# def notify_task_creation(sender,instance,created,**kwargs):
+#     print('sender',sender) 
+#     print('instance', instance)
+#     print(kwargs)
+#     print(created)
+#     if created:
+#         instance.is_completed=True
+#         instance.save()
+    
+    #created is True if the instance is newly created, False if not. 
+    #post_save itself is a save function. so another save() inside post_save() will 
+    #be a recursion. hence the condition of created. means the inner save() will occur only when 
+    #the instance is newly created. 
+
+# @receiver(pre_save,sender=Task)
+# def notify_task_before_creation(sender,instance,**kwargs):
+#     print('sender',sender)
+#     print('instance',instance)
+#     print(kwargs)
+
+#     instance.is_completed=True
+
+
+# @receiver(m2m_changed,sender=Task.assigned_to.through)
+# def notify_employee_on_task_creation(sender,instance,action,**kwargs):
+#     if action=='post_add':
+#         assigned_emails=[emp.email for emp in instance.assigned_to.all()]
+
+#         print('Receivers ', assigned_emails)
+
+#         send_mail(
+#                 "New task assigned",
+#                 f"You have been tasked with new task: {instance.title}",
+#                 "mohsinibnaftab@gmail.com",
+#                 assigned_emails,
+#                 fail_silently=False,
+#             )
+
+
+# @receiver(post_delete,sender=Task)
+# def delete_associate_task(sender,instance,**kwargs):
+#     if instance.details:
+#         instance.details.delete()
+#         print("Deleted successfull!!")
+        
