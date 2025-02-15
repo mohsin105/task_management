@@ -1,7 +1,7 @@
 from django import forms
 import re
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User
+from django.contrib.auth.models import User,Group,Permission
 
 class RegisterForm(UserCreationForm):
     class Meta:
@@ -69,3 +69,20 @@ class CustomRegistrationForm(forms.ModelForm):
             raise forms.ValidationError('Password did not match!!')
         
         return cleaned_data
+
+#no model is related to this form, hence, normal form
+class AssignRoleForm(forms.Form):
+    role=forms.ModelChoiceField(queryset=Group.objects.all(),
+                                empty_label='Select a role')
+
+#create, update on a model can be done using modelform
+class CreateGroupForm(forms.ModelForm):
+    permissions=forms.ModelMultipleChoiceField(
+        queryset=Permission.objects.all(),
+        widget=forms.CheckboxSelectMultiple,
+        required=False,
+        label='Assign Permission'
+    )
+    class Meta:
+        model=Group
+        fields=['name','permissions']

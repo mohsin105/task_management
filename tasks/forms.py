@@ -24,7 +24,7 @@ class TaskForm(forms.Form):
 class TaskModelForm(forms.ModelForm):
     class Meta:
         model=Task
-        fields=['title','description','due_date','assigned_to']
+        fields=['title','description','due_date','assigned_to'] 
 
         widgets={'title':forms.TextInput(attrs={'class':'w-full border-2 border-gray-500 rounded-lg shadow-sm ','placeholder':'title'}),
             'description':forms.Textarea(attrs={'placeholder':'title','class':'w-full border-2 border-gray-500 rounded-lg shadow-sm'}),
@@ -36,7 +36,7 @@ class TaskModelForm(forms.ModelForm):
 class TaskDetailModelForm(forms.ModelForm):
     class Meta:
         model=TaskDetail
-        fields=['priority','notes']
+        fields=['priority','notes','asset']
 
         widgets={
             'priority':forms.Select(attrs={'class':'border-2 border-gray-500 rounded-lg shadow-sm'}),

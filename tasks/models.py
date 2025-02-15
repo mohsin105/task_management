@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models.signals import post_save,pre_save,m2m_changed,post_delete
 from django.dispatch import receiver
 from django.core.mail import send_mail
-
+from django.contrib.auth.models import User
 # Create your models here.
 
 class Project(models.Model):
@@ -13,12 +13,7 @@ class Project(models.Model):
     def __str__(self):
         return self.name
 
-class Employee(models.Model):
-    name=models.CharField(max_length=250)
-    email=models.EmailField(unique=True)
 
-    def __str__(self):
-        return self.name
 
 class Task(models.Model):
     STATUS_CHOICES=[
@@ -27,13 +22,14 @@ class Task(models.Model):
         ('COMPLETED','Completed')
     ]
     project=models.ForeignKey(Project,on_delete=models.CASCADE, default=1,related_name='task_list')
-    assigned_to=models.ManyToManyField(Employee,related_name='tasks')
+    # assigned_to=models.ManyToManyField(Employee,related_name='tasks')
+    assigned_to=models.ManyToManyField(User,related_name='tasks')
     # manytomany field value is not needed to be provided when creating object in shell
     status=models.CharField(max_length=15,choices=STATUS_CHOICES, default="PENDING")
     title=models.CharField(max_length=250)
     description=models.TextField()
     due_date=models.DateField()
-    is_completed=models.BooleanField(default=False)
+    
     created_at=models.DateTimeField(auto_now_add=True)
     updated_at=models.DateTimeField(auto_now=True)
 
@@ -48,7 +44,7 @@ class TaskDetail(models.Model):
     PRIORITY_OPTIONS=((HIGH,'High'),
                       (MEDIUM,'Medium'),
                       (LOW,'Low'))
-    
+    asset=models.ImageField(upload_to='tasks_asset',blank=True,null=True,default='tasks_asset/default_img.jpg')
     task=models.OneToOneField(Task,on_delete=models.DO_NOTHING,related_name='details')
     # task field takes a Task object as value, not the id of Task object, when creating a taskdeatil object using shell
     # but in vs code, during model declaration, default= key argument takes the id of object, not object itself.

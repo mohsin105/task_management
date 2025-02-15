@@ -1,12 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign Up</title>
-</head>
-<body>
-    <h1>Welcome to authentication system</h1>
+{% extends "base.html" %}
+{% block content %}
+<h1>Welcome to authentication system</h1>
     <div>
         {% comment %} for non-field errors {% endcomment %}
          {% if form.non_field_errors %}
@@ -35,5 +29,4 @@
             <button type="submit">Sign Up</button>
         </form>
     </div>
-</body>
-</html>
+    {% endblock content %}

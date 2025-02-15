@@ -23,7 +23,7 @@
 
         <div class="flex items-center gap-1">
            <div class="list_style w-1 h-1 bg-green-600 rounded-full "></div>
-           <p>{{task.title}}</p>
+           <a href="{% url 'task-details' task.id %}">{{task.title}}</a>
         </div>
         <div class="flex items-center">
            <div class=" bg-blue-200 w-fit p-0.5 rounded-md ">
@@ -34,7 +34,7 @@
         <div class="flex gap-1 text-center -space-x-3 text-white">
             {% for emp in task.assigned_to.all %}
                 <div class="list_style w-6 h-6 bg-green-600 rounded-full border border-white self-center flex items-center justify-center ">
-                    <p >{{emp.name|slice:':2'}}</p>
+                    <p >{{emp.first_name|slice:':2'}}</p>
                 </div>
              {% endfor %}
             

@@ -1,0 +1,15 @@
+{% extends "admin/dashboard.html" %}
+{% block content %}
+    <div>
+        {% if messages %}
+            {% for message in messages %}
+                <p>{{message}}</p>
+            {% endfor %}
+        {% endif %}
+        <form action="" method="POST">
+            {% csrf_token %}
+            {{form}}
+            <button type="submit">Assign Role</button>
+        </form>
+    </div>
+{% endblock content %}

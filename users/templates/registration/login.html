@@ -1,32 +1,25 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sign In</title>
-</head>
-<body>
-    <div>
-        {% comment %} for non-field errors {% endcomment %}
-        {% if form.non_field_errors %}
-            {% for error in form.non_field_errors %}
-                <p>{{error}}</p>
-            {% endfor %}
-        {% endif %}
-    </div>
-    <div>
-        {% if messages %}
-            {% for message in messages %}
-            <p>{{message}}</p>
-            {% endfor %}
-        {% endif %}
-    </div>
-    <div>
-        <form action="" method="POST">
-            {% csrf_token %}
-            {{form.as_p}}
-            <button type="submit">Submit</button>
-        </form>
-    </div>
-</body>
-</html>
+{% extends "base.html" %}
+{% block content %}
+<div>
+    {% comment %} for non-field errors {% endcomment %}
+    {% if form.non_field_errors %}
+        {% for error in form.non_field_errors %}
+            <p>{{error}}</p>
+        {% endfor %}
+    {% endif %}
+</div>
+<div>
+    {% if messages %}
+        {% for message in messages %}
+        <p>{{message}}</p>
+        {% endfor %}
+    {% endif %}
+</div>
+<div>
+    <form action="" method="POST">
+        {% csrf_token %}
+        {{form.as_p}}
+        <button type="submit">Submit</button>
+    </form>
+</div>
+{% endblock content %}
