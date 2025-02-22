@@ -6,6 +6,11 @@ from django.db.models import Q,Count
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required,user_passes_test,permission_required
 from users.views import is_admin
+from django.views import View
+from django.utils.decorators import method_decorator
+from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
+from django.views.generic.base import ContextMixin
+from django.views.generic import ListView,DetailView,UpdateView
 # Create your views here.
 
 #test fr user passes test
@@ -54,7 +59,7 @@ def manager_dashboard(request):
         tasks=base_query.filter(status='IN_PROGRESS')
     elif type=='pending':
         tasks=base_query.filter(status='PENDING')
-    elif type=='all':
+    else:
         tasks=base_query.all()
 
     context={
@@ -94,11 +99,69 @@ def create_task(request):
              'task_detail_form':task_detail_form}
     return render(request,'task_form.html',context)
 
+#CBV of create_task
+# create_decorators=[login_required,permission_required('tasks.add_task',login_url='no-permission')]
+
+# @method_decorator(create_decorators,name='dispatch')
+class CreateTask(ContextMixin,LoginRequiredMixin,PermissionRequiredMixin,View):
+    permission_required='tasks.add_task'
+    # login_url='no-permission'
+    login_url='sign-in'
+
+    #as the mixin classes are inherited, the method_decorator is no longer needed. 
+
+    def get_context_data(self, **kwargs):
+        context= super().get_context_data(**kwargs)
+        context['task_form']=kwargs.get('task_form',TaskModelForm)
+        context['task_detail_form']=kwargs.get('task_detail_form',TaskDetailModelForm)
+        return context
+
+    def get(self,request,*args,**kwargs):
+        # task_form=TaskModelForm
+        # task_detail_form=TaskDetailModelForm
+        # context={
+        #     'task_form':task_form,
+        #     'task_detail_form':task_detail_form
+        # }
+        context=self.get_context_data()
+        return render(request,'task_form.html',context)
+
+    def post(self,request,*args,**kwargs):
+        task_form=TaskModelForm(request.POST)
+        task_detail_form=TaskDetailModelForm(request.POST,request.FILES)
+
+        if task_form.is_valid() and task_detail_form.is_valid():
+            task=task_form.save()
+            task_detail=task_detail_form.save(commit=False)
+            task_detail.task=task
+            task_detail.save()
+
+            messages.success(request,'Task created successfully')
+            return redirect('create-task')
+        else:
+            messages.error(request,'Properly Fill Up the from')
+            return redirect('create-task')
+
+
 # Read=> R of CRUD
 def show_task(request):
-    tasks=Task.objects.all()
+    tasks=Task.objects.annotate(num_emp=Count('assigned_to')).prefetch_related('assigned_to').order_by('num_emp')
     context={'tasks':tasks}
     return render(request,'show_task.html',context)
+
+#CBV of show_task
+view_task_decorators=[login_required,permission_required('tasks.view_task',login_url='no-permission')]
+
+@method_decorator(view_task_decorators,name='dispatch')
+class ViewTask(ListView):
+    model=Task
+    template_name='show_task.html'
+    context_object_name='tasks'
+
+    #apply custom queryset
+    def get_queryset(self):
+        queryset=Task.objects.prefetch_related('assigned_to').all()
+        return queryset
 
 # Update=> U of CRUD
 @login_required
@@ -112,12 +175,15 @@ def update_task(request,id):
 
     if request.method == 'POST':
         task_form=TaskModelForm(request.POST,instance=task)
-        task_detail_form=TaskDetailModelForm(request.POST,instance=task)
-
+        task_detail_form=TaskDetailModelForm(request.POST,instance=task.details)
+        # print('before save',task_detail_form.cleaned_data())
         task=task_form.save()
         task_detail=task_detail_form.save(commit=False)
         task_detail.task=task
         task_detail.save()
+
+        # print('after save',task_detail)
+        
 
         messages.success(request,'Task Updated Successfully!!')
         return redirect('update-task',id)
@@ -128,6 +194,42 @@ def update_task(request,id):
     }
 
     return render(request,'task_form.html',context)
+
+#CBV of update_task
+
+class UpdateTask(UpdateView):
+    model=Task
+    form_class=TaskModelForm
+    template_name='task_form.html'
+    context_object_name='task'
+    pk_url_kwarg='id'
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        task=self.get_object()
+        context['task_form']=self.get_form()
+
+        if hasattr(task,'details') and task.details:
+            context['task_detail_form']=TaskDetailModelForm(instance=task.details)
+        else:
+            context['task_detail_form']=TaskDetailModelForm()
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        task=self.get_object()
+        task_form=TaskModelForm(request.POST,instance=self.get_object())
+        task_detail_form=TaskDetailModelForm(request.POST,request.FILES,instance=getattr(task,'details',None)) #zodi self.object er majhe details thake tahole sheta return korbe, na hoy none. 
+
+        if task_form.is_valid() and task_detail_form.is_valid():
+            task=task_form.save()
+            task_detail=task_detail_form.save(commit=False)
+            task_detail.task=task
+            task_detail.save()
+
+            messages.success(request,'Task Updated Successfully!!')
+            return redirect('update-task',task.id)
+
+
 
 # Delete=> D of CRUD
 # delete is always a POST request. 
@@ -159,3 +261,24 @@ def task_details(request,task_id):
     
     context={'task':task,'status_choices':status_choices}
     return render(request,'task_details.html',context)
+
+#CBV of task_details
+
+class TaskDetail(DetailView):
+    model=Task
+    template_name='task_details.html'
+    context_object_name='task'
+    pk_url_kwarg='task_id'
+
+    def get_context_data(self, **kwargs):
+        context=super().get_context_data(**kwargs)
+        context['status_choices']=Task.STATUS_CHOICES
+        return context
+    
+    def post(self,request,*args,**kwargs):
+        task=self.get_object() #gives the object which sent the request, the currently logged user
+        selected_status=request.POST.get('task_status')
+        task.status=selected_status
+        task.save()
+        return redirect('task-details',task.id)
+

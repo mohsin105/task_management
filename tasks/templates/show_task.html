@@ -11,6 +11,9 @@
         <li>{{task.title}}
             <ul>
                 <li>{{task.description}}</li>
+                {% for emp in task.assigned_to.all %}
+                <li>{{emp.first_name}} {{emp.last_name}}</li>
+                {% endfor %}
             </ul>
         </li>
         {% endfor %}

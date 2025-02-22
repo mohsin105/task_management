@@ -7,10 +7,18 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.models import User,Group
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.decorators import login_required,user_passes_test
-
+from django.views import View
 
 # Create your views here.
 
+class Greetings(View):
+    greetings="Hello World!"
+
+    def get(self,request):
+        return HttpResponse(self.greetings)
+
+class HiGreetings(Greetings):
+    greetings='Hi World!'
 
 #test for user passes test
 def is_admin(user):
