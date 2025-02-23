@@ -1,15 +1,43 @@
+{% extends "base.html" %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
-    <link rel="stylesheet" href="{% static 'css/output.css' %}" />
-  </head>
-  <body>
-    <header class="bg-white shadow-md">
-      <nav class="container mx-auto px-6 py-3">
+{% block title %}Admin Dashboard{% endblock title %}
+{% block content %}
+
+<section>
+
+    <div>
+      {% block admin_content %}
+        {% include "admin/user_list.html" %}
+      {% endblock admin_content %}
+    </div>
+
+    <script>
+      document
+        .getElementById("menu-toggle")
+        .addEventListener("click", function () {
+          document.getElementById("mobile-menu").classList.toggle("hidden");
+        });
+
+      document
+        .getElementById("user-menu-button")
+        .addEventListener("click", function () {
+          document.getElementById("user-menu").classList.toggle("hidden");
+        });
+
+      // Close the dropdown when clicking outside
+      window.addEventListener("click", function (e) {
+        if (!document.getElementById("user-menu-button").contains(e.target)) {
+          document.getElementById("user-menu").classList.add("hidden");
+        }
+      });
+    </script>
+</section>
+{% endblock content %}
+
+
+{% comment %} nav bar for admin
+ 
+<nav class="container mx-auto px-6 py-3">
         <div class="flex justify-between items-center">
           <a href="index.html" class="text-xl font-bold text-gray-800"
             >Taskify</a
@@ -99,33 +127,5 @@
           >
         </div>
       </nav>
-    </header>
 
-    <main>
-      {% block content %}
-        {% include "admin/user_list.html" %}
-      {% endblock content %}
-    </main>
-
-    <script>
-      document
-        .getElementById("menu-toggle")
-        .addEventListener("click", function () {
-          document.getElementById("mobile-menu").classList.toggle("hidden");
-        });
-
-      document
-        .getElementById("user-menu-button")
-        .addEventListener("click", function () {
-          document.getElementById("user-menu").classList.toggle("hidden");
-        });
-
-      // Close the dropdown when clicking outside
-      window.addEventListener("click", function (e) {
-        if (!document.getElementById("user-menu-button").contains(e.target)) {
-          document.getElementById("user-menu").classList.add("hidden");
-        }
-      });
-    </script>
-  </body>
-</html>
+{% endcomment %}

@@ -1,5 +1,5 @@
 {% extends "admin/dashboard.html" %}
-{% block content %}
+{% block admin_content %}
     <div>
         {% if messages %}
             {% for message in messages %}
@@ -12,4 +12,4 @@
             <button type="submit">Assign Role</button>
         </form>
     </div>
-{% endblock content %}
+{% endblock admin_content %}
