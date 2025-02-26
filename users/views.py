@@ -1,18 +1,19 @@
 from django.shortcuts import render,redirect,HttpResponse
 from django.contrib.auth.forms import UserCreationForm
-from users.forms import RegisterForm,CustomRegistrationForm,AssignRoleForm,CreateGroupForm,LoginForm,CustomPasswordChangeForm,CustomPasswordResetForm,CustomPasswordResetConfirmForm
-from django.contrib.auth import authenticate,login,logout
+from users.forms import RegisterForm,CustomRegistrationForm,AssignRoleForm,CreateGroupForm,LoginForm,CustomPasswordChangeForm,CustomPasswordResetForm,CustomPasswordResetConfirmForm,EditProfileForm
+from django.contrib.auth import authenticate,login,logout,get_user_model
 from django.contrib import messages
 from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth.models import User,Group
+from django.contrib.auth.models import Group
 from django.contrib.auth.tokens import default_token_generator
 from django.contrib.auth.decorators import login_required,user_passes_test
 from django.views import View
 from django.contrib.auth.views import LoginView
-from django.views.generic import TemplateView
+from django.views.generic import TemplateView,UpdateView
 from django.contrib.auth.views import PasswordChangeView,PasswordResetView,PasswordResetConfirmView,PasswordResetCompleteView
 from django.urls import reverse_lazy
 
+User=get_user_model()
 
 # Create your views here.
 
@@ -39,7 +40,8 @@ def sign_up(request):
             user=form.save(commit=False)
             print(user)
             user.set_password(form.cleaned_data.get('password1'))
-            user.is_active=False
+            # user.is_active=False
+            user.is_active=True #email verification on korle eta False koro. and def activate_user view te True koro.
             print(form.cleaned_data)
             user.save()
 
@@ -160,10 +162,26 @@ class ProfileView(TemplateView):
         context['username']=user.username
         context['email']=user.email
         context['name']=user.get_full_name()
+        context['bio']=user.bio
+        context['profile_image']=user.profile_image
         context['member_since']=user.date_joined
         context['last_login']=user.last_login
 
         return context
+
+class EditProfileView(UpdateView):
+    model=User
+    form_class=EditProfileForm
+    template_name='accounts/update_profile.html'
+    context_object_name='form'
+
+    def get_object(self):
+        return self.request.user
+
+    def form_valid(self,form):
+        form.save()
+        return redirect('profile')
+
 
 class ChangePassword(PasswordChangeView):
     template_name='accounts/password_change.html'

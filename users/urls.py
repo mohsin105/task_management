@@ -1,5 +1,5 @@
 from django.urls import path
-from users.views import sign_up,sign_in,sign_out,activate_user,admin_dashboard,assign_role,create_group,group_list,Greetings,HiGreetings,CustomLoginView,ProfileView,ChangePassword,CustomPasswordResetView,CustomPasswordResetConfirmView
+from users.views import sign_up,sign_in,sign_out,activate_user,admin_dashboard,assign_role,create_group,group_list,Greetings,HiGreetings,CustomLoginView,ProfileView,ChangePassword,CustomPasswordResetView,CustomPasswordResetConfirmView,EditProfileView
 from django.contrib.auth.views import LoginView,LogoutView
 from django.views.generic import TemplateView
 from django.contrib.auth.views import PasswordChangeView,PasswordChangeDoneView
@@ -19,6 +19,7 @@ urlpatterns = [
     path('greetings',HiGreetings.as_view(greetings='Kemon acho')),
     # path('profile',TemplateView.as_view(template_name='accounts/profile.html'),name='')
     path('profile',ProfileView.as_view(),name='profile'),
+    path('edit-profile',EditProfileView.as_view(),name='edit-profile'),
     # path('password-change',PasswordChangeView.as_view(template_name='accounts/password_change.html'),name='password-change'),
     path('password-change',ChangePassword.as_view(),name='password-change'),
     path('password-change/done/',PasswordChangeDoneView.as_view(template_name='accounts/password_change_done.html'),name='password_change_done'),

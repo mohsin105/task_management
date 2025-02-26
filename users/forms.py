@@ -1,8 +1,12 @@
 from django import forms
 import re
 from django.contrib.auth.forms import UserCreationForm
-from django.contrib.auth.models import User,Group,Permission
+from django.contrib.auth.models import Group,Permission
 from django.contrib.auth.forms import AuthenticationForm,PasswordChangeForm,PasswordResetForm,SetPasswordForm
+from users.models import CustomUser
+from django.contrib.auth import get_user_model
+
+User=get_user_model() #the current user is assigned to User variable
 
 class RegisterForm(UserCreationForm):
     class Meta:
@@ -100,3 +104,8 @@ class CustomPasswordResetForm(PasswordResetForm): #inherit Mixin here
 
 class CustomPasswordResetConfirmForm(SetPasswordForm):#inherit Mixin here
     pass
+
+class EditProfileForm(forms.ModelForm): #mixin user koro
+    class Meta:
+        model=CustomUser
+        fields=['email','first_name','last_name','bio','profile_image']
