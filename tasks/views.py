@@ -8,9 +8,9 @@ from django.contrib.auth.decorators import login_required,user_passes_test,permi
 from users.views import is_admin
 from django.views import View
 from django.utils.decorators import method_decorator
-from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin,UserPassesTestMixin
 from django.views.generic.base import ContextMixin
-from django.views.generic import ListView,DetailView,UpdateView
+from django.views.generic import ListView,DetailView,UpdateView,DeleteView
 # Create your views here.
 
 #test fr user passes test
@@ -19,6 +19,9 @@ def is_manager(user):
     return user.groups.filter(name='Manager').exists()
 def is_employee(user):
     return user.groups.filter(name='Employee').exists()
+
+class CustomUserPassesTestMixin(UserPassesTestMixin):
+    pass
 
 @login_required
 def dashboard(request):
@@ -34,12 +37,19 @@ def dashboard(request):
 @user_passes_test(is_employee,login_url='no-permission')
 def employee_dashboard(request):
     return render(request,'dashboard/user_dashboard.html')
+# CBV of employee dashboard
+class Employee_Dashboard(ContextMixin,UserPassesTestMixin,View):
+
+    login_url='no-permission'
+    redirect_field_name = 'no-permission'
+    def test_func(self):
+        return self.request.user.groups.filter(name='Employee').exists()
+    def get(self,request,*args,**kwargs):
+        return render(request,'dashboard/user_dashboard.html')
 
 # @user_passes_test(is_manager,login_url='no-permission')
 def manager_dashboard(request):
     type=request.GET.get('type','all') #if there is no 'type' keyword in request.GET dict, return 'all'
-
-    
 
     # counting using aggregate
 
@@ -164,45 +174,51 @@ class ViewTask(ListView):
         return queryset
 
 # Update=> U of CRUD
-@login_required
-@permission_required('tasks.change_task',login_url='no-permission')
-def update_task(request,id):
-    task=Task.objects.get(id=id)
-    task_form=TaskModelForm(instance=task)
-    if task.details:
-        task_detail_form=TaskDetailModelForm(instance=task.details)
+# @login_required
+# @permission_required('tasks.change_task',login_url='no-permission')
+# def update_task(request,id):
+#     task=Task.objects.get(id=id)
+#     task_form=TaskModelForm(instance=task)
+#     if task.details:
+#         task_detail_form=TaskDetailModelForm(instance=task.details)
         
 
-    if request.method == 'POST':
-        task_form=TaskModelForm(request.POST,instance=task)
-        task_detail_form=TaskDetailModelForm(request.POST,instance=task.details)
-        # print('before save',task_detail_form.cleaned_data())
-        task=task_form.save()
-        task_detail=task_detail_form.save(commit=False)
-        task_detail.task=task
-        task_detail.save()
+#     if request.method == 'POST':
+#         task_form=TaskModelForm(request.POST,instance=task)
+#         task_detail_form=TaskDetailModelForm(request.POST,instance=task.details)
+#         # print('before save',task_detail_form.cleaned_data())
+#         task=task_form.save()
+#         task_detail=task_detail_form.save(commit=False)
+#         task_detail.task=task
+#         task_detail.save()
 
-        # print('after save',task_detail)
+#         # print('after save',task_detail)
         
 
-        messages.success(request,'Task Updated Successfully!!')
-        return redirect('update-task',id)
+#         messages.success(request,'Task Updated Successfully!!')
+#         return redirect('update-task',id)
     
-    context={
-        'task_form':task_form,
-        'task_detail_form':task_detail_form
-    }
+#     context={
+#         'task_form':task_form,
+#         'task_detail_form':task_detail_form
+#     }
 
-    return render(request,'task_form.html',context)
+#     return render(request,'task_form.html',context)
 
 #CBV of update_task
 
-class UpdateTask(UpdateView):
+# update_task_decorators=[login_required,permission_required('tasks.change_task',login_url='no-permission')]
+
+# @method_decorator(update_task_decorators,name='dispatch')
+class UpdateTask(LoginRequiredMixin,PermissionRequiredMixin,UpdateView):
     model=Task
     form_class=TaskModelForm
     template_name='task_form.html'
     context_object_name='task'
     pk_url_kwarg='id'
+    permission_required='tasks.change_task'
+    login_url='no-permission' #didnt work when login passed but permission failed
+    redirect_field_name='no-permission'
 
     def get_context_data(self, **kwargs):
         context=super().get_context_data(**kwargs)
@@ -245,6 +261,14 @@ def delete_task(request,id):
     
     messages.error(request,'Something went wrong')
     return redirect('manager-dashboard')
+
+class Delete_Task(LoginRequiredMixin,PermissionRequiredMixin,DeleteView):
+    permission_required='tasks.delete_task'
+    login_url='no-permission'
+    success_url='dashboard'
+    model=Task
+    pk_url_kwarg='id'
+
 
 @login_required
 @permission_required('tasks.view_task',login_url='no-permission')
