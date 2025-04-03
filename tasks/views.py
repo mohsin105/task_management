@@ -11,6 +11,7 @@ from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin,UserPassesTestMixin
 from django.views.generic.base import ContextMixin
 from django.views.generic import ListView,DetailView,UpdateView,DeleteView
+from django.urls import reverse_lazy
 # Create your views here.
 
 #test fr user passes test
@@ -47,6 +48,8 @@ class Employee_Dashboard(ContextMixin,UserPassesTestMixin,View):
     def get(self,request,*args,**kwargs):
         return render(request,'dashboard/user_dashboard.html')
 
+"""manager_dashboard FBV
+
 # @user_passes_test(is_manager,login_url='no-permission')
 def manager_dashboard(request):
     type=request.GET.get('type','all') #if there is no 'type' keyword in request.GET dict, return 'all'
@@ -81,6 +84,35 @@ def manager_dashboard(request):
         # 'pending_task':pending_task
     }
     return render(request,'dashboard/manager_dashboard.html',context)
+"""
+
+
+class ManagerDashboard(ListView):
+    template_name='dashboard/manager_dashboard.html'
+    model=Task
+    context_object_name='tasks'
+
+    def get_context_data(self, **kwargs):
+        context= super().get_context_data(**kwargs)
+        task_count=Task.objects.aggregate(total=Count('id'),
+                                      completed=Count('id',filter=Q(status='COMPLETED')),
+                                      in_progress=Count('id',filter=Q(status='IN_PROGRESS')),
+                                      pending=Count('id',filter=Q(status='PENDING')))
+        context['task_count']=task_count
+        return context
+    
+    def get_queryset(self):
+        type=self.request.GET.get('type','all')
+        base_query=Task.objects.select_related('details').prefetch_related('assigned_to')
+        if type=='completed':
+            query_set=base_query.filter(status='COMPLETED')
+        elif type=='in-progress':
+            query_set=base_query.filter(status='IN_PROGRESS')
+        elif type=='pending':
+            query_set=base_query.filter(status='PENDING')
+        else:
+            query_set=base_query.all()
+        return query_set
 
 # Create => C of CRUD
 @login_required
@@ -265,10 +297,15 @@ def delete_task(request,id):
 class Delete_Task(LoginRequiredMixin,PermissionRequiredMixin,DeleteView):
     permission_required='tasks.delete_task'
     login_url='no-permission'
-    success_url='dashboard'
+    success_url=reverse_lazy('dashboard') #reverse_lazy is a must. 
     model=Task
     pk_url_kwarg='id'
+    # redirect_field_name='dashboard'
 
+    # def get_success_url(self):
+    #     return 'dashboard'
+
+"""task_details FBV
 
 @login_required
 @permission_required('tasks.view_task',login_url='no-permission')
@@ -285,6 +322,7 @@ def task_details(request,task_id):
     
     context={'task':task,'status_choices':status_choices}
     return render(request,'task_details.html',context)
+"""
 
 #CBV of task_details
 
