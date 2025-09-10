@@ -9,7 +9,7 @@ urlpatterns = [
     # path('create-task/',create_task,name='create-task'),
     path('create-task/',CreateTask.as_view(),name='create-task'),
     # path('view-task/',show_task),
-    path('view-task/',ViewTask.as_view()),
+    path('',ViewTask.as_view(), name='view-task'),
     # path('task/<int:task_id>/details/',task_details,name='task-details'),
     path('task/<int:task_id>/details/',TaskDetail.as_view(),name='task-details'),
     # path('update-task/<int:id>/',update_task,name='update-task'),

@@ -1,26 +1,38 @@
-<!DOCTYPE html>
+{% extends "dashboard/dashboard.html" %}
+{% block title %}Task List{% endblock title %}
+{% block tasks %}
+{% comment %} <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>View Task</title>
 </head>
-<body>
+<body> {% endcomment %}
+
+
     <ul>
         {% for task in tasks %}
-        <li>{{task.title}}
-            <ul>
-                <li>{{task.description}}</li>
-                {% for emp in task.assigned_to.all %}
-                <li>{{emp.first_name}} {{emp.last_name}}</li>
-                {% endfor %}
-            </ul>
+        <li class="my-8 bg-gray-100 border border-violet-900 shadow-xl rounded-lg p-4">
+            <p class="text-lg font-bold my-2">{{task.title}}</p>
+            <div class="flex justify-between">
+                <p>
+                    <span class="font-semibold">Description: </span>
+                    {{task.description}}
+                </p>
+                <ul>
+                    <p class="text-blue-950 font-semibold">Assigned To: </p>
+                    {% for emp in task.assigned_to.all %}
+                        <li>{{emp.first_name}} {{emp.last_name}}</li>
+                    {% endfor %}
+                </ul>
+            </div>
         </li>
         {% endfor %}
     </ul>
     
+{% endblock tasks %}    
     
     
-    
-</body>
-</html>
+{% comment %} </body>
+</html> {% endcomment %}
