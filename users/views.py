@@ -53,38 +53,7 @@ def sign_up(request):
 
 
     return render(request,'registration/register.html',{'form':form})
-"""sign_in with front-end form handling 
 
-# form handling is done on front-end
-def sign_in(request):
-    if request.method=='POST':
-        print(request.POST)
-        username=request.POST.get('username')
-        password=request.POST.get('password')
-
-        user=authenticate(request,username=username,password=password)
-
-        if user is not None:
-            login(request,user)
-            return redirect('home')
-    return render(request,'registration/login.html')
-"""
-
-
-"""sign_in FBV with default authentication form
-
-# sign_in with default authentication form
-def sign_in(request):
-    form=AuthenticationForm()
-    if request.method=='POST':
-        form=AuthenticationForm(data=request.POST)
-        if form.is_valid():
-            user=form.get_user()
-            login(request,user)
-            return redirect('home')
-            
-    return render(request,'registration/login.html',{'form':form})
-"""
 
 #CBV of sign_in 
 
@@ -99,14 +68,7 @@ class CustomLoginView(LoginView):
         else:
             return super().get_success_url() #the url set in settings as LOGIN_REDIRECT_URL
 
-"""sign_out FBV
 
-@login_required
-def sign_out(request):
-    if request.method=='POST':
-        logout(request)
-        return redirect('sign-in')
-"""
 
 # class CustomLogOutView(LogoutView):
 #     redirect_field_name='sign-in'
@@ -129,26 +91,7 @@ def admin_dashboard(request):
     context={'users':users}
     return render(request,'admin/dashboard.html',context)
 
-"""assign_role FBV 
 
-@user_passes_test(is_admin,login_url='no-permission')
-def assign_role(request,user_id):
-    user=User.objects.get(id=user_id)
-    form=AssignRoleForm()
-
-    if request.method =='POST':
-        form=AssignRoleForm(request.POST)
-        if form.is_valid():
-            role=form.cleaned_data.get('role')
-            user.groups.clear()
-            user.groups.add(role)
-
-            messages.success(request,f'User {user.username} has been assigned to the {role.name} role')
-            return redirect('admin-dashboard')
-
-    context={'form':form}
-    return render(request,'admin/assign_role.html',context)
-"""
 
 class AssignRole(UserPassesTestMixin,View):
     login_url='no-permission'
@@ -175,21 +118,7 @@ class AssignRole(UserPassesTestMixin,View):
             messages.success(request,f'User {user.username} has been assigned to the {role.name} role')
             return redirect('admin-dashboard')
     
-"""create_group FBV 
 
-@user_passes_test(is_admin,login_url='no-permission')
-def create_group(request):
-    form=CreateGroupForm()
-    if request.method=='POST':
-        form=CreateGroupForm(request.POST)
-        if form.is_valid():
-            group=form.save()
-            messages.success(request,f'Group {group.name} created successfully')
-            return redirect('create-group')
-    
-    context={'form':form}
-    return render(request,'admin/create_group.html',context)
-"""
 
 class CreateGroup(UserPassesTestMixin,CreateView):
     model=Group
