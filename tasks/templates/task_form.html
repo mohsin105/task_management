@@ -1,34 +1,64 @@
-{% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Task Form</title>
-    <link rel="stylesheet" href="{% static 'css/output.css' %}">
-</head>
-<body>
-    <div class="w-1/2 mx-auto  mt-10 p-3 border-2 border-black">
+{% extends "base.html" %}
+{% block title %}Task Form{% endblock title %}
+{% block content %}
+
+<div class="md:w-1/2 mx-auto  mt-10 p-3 bg-cyan-50 rounded-md">
+    <div>
+        <h1 class="text-3xl text-center font-bold mb-4">Create New Task with Details</h1>
+        {% if message %}
+            <p class="p-2 bg-violet-900 text-gray-300 border-2 rounded-md">
+                {{message}}
+            </p>
+        {% endif %}
+    </div>
+    <div class="p-4 w-3/4 mx-auto border-2 border-black rounded-md">
         <div>
-            {% if message %}
-                <p>{{message}}</p>
+            {% if messages %}
+                {% for message in messages %}
+                    <p
+                        class="p-2 border-2 my-2 rounded-md shadow-xl bg-cyan-200 font-semibold"
+                        >{{message}}
+                    </p>
+                {% endfor %}
             {% endif %}
         </div>
-        <div>
-            <div>
-                {% if messages %}
-                    {% for message in messages %}
-                        <p>{{message}}</p>
-                    {% endfor %}
-                {% endif %}
-            </div>
-            <form action="" method="POST" enctype="multipart/form-data">
-                {% csrf_token %}
-                {{task_form.as_p}}
-                {{task_detail_form.as_p}}
-                <button type="submit" class="bg-rose-500 p-2 mt-4 rounded-sm">Submit </button>
-            </form>
-        </div>
+        <form action="" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% for field in task_form %}
+
+                <div 
+                    class="{% if field.label == "Status" or field.label == "Due date" %}
+                        md:w-1/3 md:inline-block mr-8 {% endif %}"
+                    >
+                    <label 
+                        for="{{field.id_for_label}}"
+                        class="font-bold"
+                        >{{field.label}}
+                    </label>
+                    <div >
+                        {{field}}
+                    </div>
+                </div>
+
+            {% endfor %}
+            {% for field in task_detail_form %}
+                <label 
+                    for="{{field.id_for_label}}"
+                    class="font-bold"
+                    >{{field.label}}
+                </label>
+                <div>
+                    {{field}}
+                </div>
+            {% endfor %}
+            {% comment %} {{task_form.as_p}} {% endcomment %}
+            {% comment %} {{task_detail_form.as_p}} {% endcomment %}
+            <button 
+                type="submit" 
+                class="w-full bg-rose-500 p-2 my-4 rounded-md shadow-md font-bold text-lg"
+                >Submit 
+            </button>
+        </form>
     </div>
-</body>
-</html>
+</div>
+{% endblock content %}

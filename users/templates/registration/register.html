@@ -1,21 +1,31 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Welcome to authentication system</h1>
-    <div>
+<h1 class="font-bold text-3xl text-center my-4">Register Now</h1>
+    <div class="w-1/3 mx-auto p-4 border-2 rounded-md border-violet-950">
         {% comment %} for non-field errors {% endcomment %}
-         {% if form.non_field_errors %}
-            {% for error in form.non_field_errors %}
-                <p>{{error}}</p>
-            {% endfor %}
-         {% endif %}
+        <div>
+
+            {% if form.non_field_errors %}
+                {% for error in form.non_field_errors %}
+                    <p class="my-2 p-4 border-2 bg-cyan-300 font-semibold">
+                        {{error}}
+                    </p>
+                {% endfor %}
+            {% endif %}
+        </div>
 
          {% comment %} printing the form field separately  {% endcomment %}
         <form action="" method="POST">
             {% csrf_token %}
             {% for field in form %}
-                <p>
-                    <label for="{{field.id_for_label}}">{{field.label}}</label> {{field}}
-                </p>
+                <div>
+                    <label for="{{field.id_for_label}}"
+                        class="font-semibold">{{field.label}}
+                    </label>
+                    <div>
+                        {{field}}
+                    </div> 
+                </div>
                 {% comment %} for field-errors {% endcomment %}
                  {% if field.errors %}
                     <ul>
@@ -26,7 +36,19 @@
                     </ul>
                  {% endif %}
             {% endfor %}
-            <button type="submit">Sign Up</button>
+            <button 
+                type="submit"
+                class="w-full p-4 my-4 bg-blue-600 border-2 rounded-md shadow-md text-gray-300 hover:bg-blue-950 font-bold text-lg"
+                >Sign Up
+            </button>
+            <div class='w-full p-2 my-2 border-2 rounded-md text-center'>
+                <p>
+                    Already have an account? 
+                    <a href="{% url 'sign-in' %}" class="text-blue-900 font-bold"
+                        >Sign In Now
+                    </a>
+                </p>
+            </div>
         </form>
     </div>
     {% endblock content %}

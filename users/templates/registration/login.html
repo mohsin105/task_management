@@ -1,26 +1,44 @@
 {% extends "base.html" %}
 {% block content %}
-<div>
-    {% comment %} for non-field errors {% endcomment %}
-    {% if form.non_field_errors %}
-        {% for error in form.non_field_errors %}
-            <p>{{error}}</p>
-        {% endfor %}
-    {% endif %}
-</div>
-<div>
-    {% if messages %}
-        {% for message in messages %}
-        <p>{{message}}</p>
-        {% endfor %}
-    {% endif %}
-</div>
-<div>
-    <form action="" method="POST">
-        {% csrf_token %}
-        {{form.as_p}}
-        <button type="submit">Submit</button>
-    </form>
-    <p><a href="{% url 'password-reset' %}">Forgot Password</a></p>
+<div class='w-1/3 mx-auto border-2 rounded-md p-4 my-4'>
+    <h1 class="text-3xl text-center font-bold my-4">Login</h1>
+    <div>
+        {% comment %} for non-field errors {% endcomment %}
+        {% if form.non_field_errors %}
+            {% for error in form.non_field_errors %}
+                <p>{{error}}</p>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div>
+        {% if messages %}
+            {% for message in messages %}
+            <p>{{message}}</p>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div>
+        <form action="" method="POST">
+            {% csrf_token %}
+            {% for field in form %}
+                <label for="{{field.id_for_label}}"
+                       class="font-bold text-lg"
+                    >{{field.label}}
+                </label>
+                <div>
+                    {{field}}
+                </div>
+            {% endfor %}
+            {% comment %} {{form.as_p}} {% endcomment %}
+            <button 
+                type="submit"
+                class="w-full p-4 my-4 border-2 rounded-md shadow-md bg-cyan-500 hover:bg-cyan-950 font-bold text-lg"
+                >Submit
+            </button>
+        </form>
+        <p class="text-blue-800 font-bold ">
+            <a href="{% url 'password-reset' %}">Forgot Password</a>
+        </p>
+    </div>
 </div>
 {% endblock content %}

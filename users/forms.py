@@ -20,13 +20,49 @@ class RegisterForm(UserCreationForm):
 
 class CustomRegistrationForm(forms.ModelForm):
     #manually declaring new form fields
-    password1=forms.CharField(widget=forms.PasswordInput)
-    confirm_password=forms.CharField(widget=forms.PasswordInput)
+    password1=forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'placeholder':'Enter Password',
+            'class':'w-full my-2 p-4 border-2 rounded-md shadow-md border-gray-400',
+        }))
+    confirm_password=forms.CharField(widget=forms.PasswordInput(
+        attrs={
+            'placeholder':'Confirm the password',
+            'class':'w-full my-2 p-4 border-2 border-gray-400 rounded-md shadow-md'
+        }
+    ))
     
     class Meta:
         model=User
         fields=['username','first_name','last_name','email','password1','confirm_password'] 
         #by default, only fields that are declared in User model
+
+        widgets={
+            'username':forms.TextInput(
+                attrs={
+                    'placeholder':'username',
+                    'class':'w-full p-4 my-2 border-2 rounded-md shadow-md',
+                }
+            ),
+            'first_name':forms.TextInput(
+                attrs={
+                    'placeholder':'First Name',
+                    'class':'w-full p-4 my-2 border-2 rounded-md shadow-md border-gray-400',
+                }
+            ),
+            'last_name':forms.TextInput(
+                attrs={
+                    'placeholder':'Last Name',
+                    'class':'w-full p-4 my-2 border-2 rounded-md shadow-md border-gray-400'
+                }
+            ),
+            'email':forms.EmailInput(
+                attrs={
+                    'placeholder':'Your Email',
+                    'class':'w-full p-4 my-2 border-2 border-gray-400 rounded-md shadow-md'
+                }
+            )
+        }
     
     
     # Error validation for field-error
@@ -92,12 +128,52 @@ class CreateGroupForm(forms.ModelForm):
         model=Group
         fields=['name','permissions']
 
+        widgets={
+            'name':forms.TextInput(
+                attrs={
+                    'placeholder':'Name of The User Group',
+                    'class':'w-full p-4 my-2 border-2 border-gray-400 rounded-md'
+                }
+            ),
+            'permissions':forms.CheckboxSelectMultiple(
+                attrs={
+                    'class':'p-4 my-2 border-2 border-gray-400 rounded-md font-semibold'
+                }
+            )
+        }
+
 class LoginForm(AuthenticationForm):
     def __init__(self, *args, **kwargs): #request by default chilo. keno dorkar nai ekhon?
         super().__init__( *args, **kwargs)
 
+        self.fields['username'].widget.attrs.update({
+            'placeholder':'Enter your username',
+            'class':'w-full p-4 my-2 border-2 rounded-md shadow-md border-gray-400'
+        })
+        self.fields['password'].widget.attrs.update({
+            'placeholder':'Enter Your Password',
+            'class':'w-full p-4 my-2 border-2 rounded-md shadow-md border-gray-400'
+        })
+
 class CustomPasswordChangeForm(PasswordChangeForm): #inherit Mixin here
-    pass
+    def __init__(self, user, *args, **kwargs):
+        super().__init__(user, *args, **kwargs)
+
+        for field in ['old_password','new_password1','new_password2']:
+            self.fields[field].help_text = None
+        
+        self.fields['old_password'].widget.attrs.update({
+            'placeholder':'Enter Current Password',
+            'class':'w-full p-4 my-2 border-2 rounded-md shadow-md border-gray-400'
+        })
+        self.fields['new_password1'].widget.attrs.update({
+            'placeholder':'New Password',
+            'class':'w-full p-4 my-2 border-2 rounded-md shadow-md border-gray-400',
+        })
+        self.fields['new_password2'].widget.attrs.update({
+            'placeholder':'Confirm New Password',
+            'class':'w-full p-4 my-2 border-2 rounded-md shadow-md border-gray-400'
+        })
 
 class CustomPasswordResetForm(PasswordResetForm): #inherit Mixin here
     pass
@@ -109,3 +185,36 @@ class EditProfileForm(forms.ModelForm): #mixin user koro
     class Meta:
         model=CustomUser
         fields=['email','first_name','last_name','bio','profile_image']
+
+        widgets={
+            'email':forms.EmailInput(
+                attrs={
+                    'placeholder':'demo@gmail.com',
+                    'class':'w-full p-4 my-2 border-2 border-gray-400 rounded-md shadow-md',
+                }
+            ),
+            'first_name':forms.TextInput(
+                attrs={
+                    'placeholder':'First Name',
+                    'class':'w-full p-4 my-2 border-2 border-gray-400 rounded-md shadow-md',
+                }
+            ),
+            'last_name':forms.TextInput(
+                attrs={
+                    'placeholder':'Last Name',
+                    'class':'w-full p-4 my-2 border-2 border-gray-400 rounded-md shadow-md'
+                }
+            ),
+            'bio':forms.Textarea(
+                attrs={
+                    'placeholder':'Your Bio',
+                    'class':'w-full p-4 my-2 border-gray-500 rounded-md shadow-md',
+                    'rows':8
+                }
+            ),
+            'profile_image':forms.FileInput(
+                attrs={
+
+                }
+            )
+        }

@@ -1,15 +1,61 @@
 {% extends "admin/dashboard.html" %}
 {% block admin_content %}
-    <div>
-        {% if messages %}
-            {% for message in messages %}
-                <p>{{message}}</p>
-            {% endfor %}
-        {% endif %}
-        <form action="" method="POST">
-            {% csrf_token %}
-            {{form}}
-            <button type="submit">Create Group</button>
-        </form>
-    </div>
+<h1 class="font-bold text-3xl text-center my-4">Create A New Group</h1>
+<div class="w-fit mx-4 md:mx-auto p-4  border-2 border-violet-950 rounded-md">
+    {% if messages %}
+        {% for message in messages %}
+            <p>{{message}}</p>
+        {% endfor %}
+    {% endif %}
+    <form action="" method="POST">
+        {% csrf_token %}
+        <div>
+            <label 
+                for="{{form.name.id_for_label}}"
+                class="font-bold text-lg">
+                {{form.name.label}}
+            </label>
+            <div>
+                {{form.name}}
+            </div>
+        </div>
+        <div>
+            <label 
+                for="{{form.permissions.id_for_label}}"
+                class="font-bold text-lg my-2">
+                {{form.permissions.label}}
+            </label>
+            <div>
+                {% for checkbox in form.permissions %}
+                    <div class="my-1">
+                        <label 
+                            for=""
+                            class=""
+                            >
+                            {{checkbox.tag}}
+                        </label>
+                        <span>{{checkbox.choice_label}}</span>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <button 
+            type="submit"
+            class="w-full p-4 my-4 bg-cyan-500 hover:bg-cyan-900 border-2 rounded-md shadow-md text-lg font-bold "
+            >Create Group
+        </button>
+    </form>
+</div>
 {% endblock admin_content %}
+
+
+{% comment %} {% for field in form %}
+    <label 
+        for="{{field.id_for_label}}"
+        class="font-bold">{{field.label}}</label>
+    <div>
+        {{field}}
+    </div>
+{% endfor %} {% endcomment %}
+{% comment %} {{form}} {% endcomment %}

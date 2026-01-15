@@ -1,7 +1,7 @@
 from django.shortcuts import render,redirect
 from django.http import HttpResponse
-from tasks.forms import TaskForm,TaskModelForm,TaskDetailModelForm
-from tasks.models import Task
+from tasks.forms import TaskForm,TaskModelForm,TaskDetailModelForm,ProjectModelForm
+from tasks.models import Task,Project
 from django.db.models import Q,Count
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required,user_passes_test,permission_required
@@ -10,7 +10,7 @@ from django.views import View
 from django.utils.decorators import method_decorator
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin,UserPassesTestMixin
 from django.views.generic.base import ContextMixin
-from django.views.generic import ListView,DetailView,UpdateView,DeleteView
+from django.views.generic import ListView,DetailView,UpdateView,DeleteView,CreateView
 from django.urls import reverse_lazy
 # Create your views here.
 
@@ -220,4 +220,34 @@ class TaskDetail(DetailView):
         task.status=selected_status
         task.save()
         return redirect('task-details',task.id)
+    
+class CreateProject(UserPassesTestMixin,CreateView):
+    model=Project
+    form_class=ProjectModelForm
+    template_name='project_form.html'
+    context_object_name='form'
+    success_url=reverse_lazy('create-project')
+
+    def test_func(self):
+        return self.request.user.groups.filter(name='Admin').exists()
+        # try using 
+        # return is_admin(request.user)
+
+    def form_valid(self, form):
+        project_name = form.cleaned_data.get('name')
+        does_exist = Project.objects.filter(name=project_name).exists()
+        if does_exist:
+            messages.error(self.request, "Project with Same Name already Exists!")
+            return render(self.request,'project_form.html',self.get_context_data())
+        
+        messages.success(self.request, 'Project Created Successfully')
+        return super().form_valid(form)
+
+class ProjectList(ListView):
+    model=Project
+    template_name='project_list.html'
+    context_object_name='projects'
+
+    def get_queryset(self):
+        return Project.objects.prefetch_related('task_list').all()
 
