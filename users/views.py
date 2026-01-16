@@ -15,7 +15,24 @@ from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixin,UserPassesTestMixin
 
 User=get_user_model()
-
+admin_options =[
+        {
+            'title':'Groups',
+            'url':'group-list',
+        },
+        {
+            'title':'Projects',
+            'url':'project-list',
+        },
+        {
+            'title':'Tasks',
+            'url':'view-task',
+        },
+        {
+            'title':'Users',
+            'url':'dashboard',
+        },
+    ]
 # Create your views here.
 
 class Greetings(View):
@@ -88,7 +105,11 @@ def activate_user(reqeust,user_id,token):
 @user_passes_test(is_admin,login_url='no-permission')
 def admin_dashboard(request):
     users=User.objects.all()
-    context={'users':users}
+    
+    context={
+        'users':users,
+        'admin_options':admin_options
+        }
     return render(request,'admin/dashboard.html',context)
 
 
@@ -138,7 +159,10 @@ class CreateGroup(UserPassesTestMixin,CreateView):
 @user_passes_test(is_admin,login_url='no-permission')
 def group_list(request):
     groups=Group.objects.prefetch_related('permissions').all()
-    context={'groups':groups}
+    context={
+        'groups':groups,
+        'admin_options':admin_options,
+        }
     return render(request,'admin/group_list.html',context)
 
 class GroupList(UserPassesTestMixin,ListView):

@@ -4,7 +4,17 @@
 {% block content %}
 
 <section>
-
+    <div class="grid grid-cols-2 gap-4 border-2 p-4 border-gray-500">
+      {% for option in admin_options %}
+        <div>
+          <a href="{% url option.url %}">
+            <div class="border-1 border-black p-4 shadow-md rounded-md">
+              <h3 class="text-xl font-bold">{{option.title}}</h3>
+            </div>
+          </a>
+        </div>
+      {% endfor %}
+    </div>
     <div>
       {% block admin_content %}
         {% include "admin/user_list.html" %}

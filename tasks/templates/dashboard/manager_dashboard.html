@@ -11,7 +11,7 @@
         {% endif %}
     </div>
             
-    <div class="all_task_body grid grid-cols-4 gap-1 text-sm">
+    <div class="all_task_body grid grid-cols-4 gap-1 text-xl font-bold my-4 border rounded-md shadow-2xl p-4">
         <!-- <div class="task_body_heading"></div> -->
          <p>TASK TITLE</p>
          <p>PRIORITY</p>
@@ -19,34 +19,43 @@
          <p>CREATED AT</p>
     </div>
     {% for task in tasks %}
-    <div class="grid grid-cols-4 gap-2 text-xs mt-2">
+    <div class="grid grid-cols-4 gap-2 my-4 border-2 border-gray-400 rounded-md shadow-md p-4">
 
-        <div class="flex items-center gap-1">
-           <div class="list_style w-1 h-1 bg-green-600 rounded-full "></div>
+        <div class="flex items-center gap-1 font-bold">
+           <div class="list_style w-2 h-2 bg-green-600 rounded-full "></div>
            <a href="{% url 'task-details' task.id %}">{{task.title}}</a>
         </div>
         <div class="flex items-center">
-           <div class=" bg-blue-200 w-fit p-0.5 rounded-md ">
+           <div class=" bg-blue-200  px-2 py-1 rounded-md ">
                <p>{{task.details.get_priority_display}}</p>
 
            </div>
         </div>
         <div class="flex gap-1 text-center -space-x-3 text-white">
             {% for emp in task.assigned_to.all %}
-                <div class="list_style w-6 h-6 bg-green-600 rounded-full border border-white self-center flex items-center justify-center ">
+                <div class="list_style w-8 h-8 bg-green-600 rounded-full border border-white self-center flex items-center justify-center ">
                     <p >{{emp.first_name|slice:':2'}}</p>
                 </div>
              {% endfor %}
             
             
          </div>
-        <div class="flex items-center">
+        <div class="flex items-center space-x-2">
 
             <p>{{task.created_at|timesince}}</p>
-            <a href="{% url 'update-task' task.id %}">Update</a>
+            <a 
+                class="px-2 py-1 bg-cyan-300 font-semibold rounded-md border-2"
+                href="{% url 'update-task' task.id %}"
+                >
+                Update
+            </a>
             <form action="{% url 'delete-task' task.id %}" method="POST">
                 {% csrf_token %}
-                <button type="submit">DELETE</button>
+                <button 
+                    type="submit"
+                    class="px-2 py-1 border-2 bg-red-400 font-bold rounded-md">
+                    DELETE
+                </button>
             </form>
         </div>
     </div>

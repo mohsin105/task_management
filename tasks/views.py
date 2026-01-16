@@ -220,7 +220,9 @@ class TaskDetail(DetailView):
         task.status=selected_status
         task.save()
         return redirect('task-details',task.id)
-    
+
+# Project Model CRUD (only for ADMIN)   
+
 class CreateProject(UserPassesTestMixin,CreateView):
     model=Project
     form_class=ProjectModelForm
@@ -251,3 +253,39 @@ class ProjectList(ListView):
     def get_queryset(self):
         return Project.objects.prefetch_related('task_list').all()
 
+class UpdateProject(UserPassesTestMixin,UpdateView):
+    model=Project
+    template_name='project_form.html'
+    context_object_name='form'
+    pk_url_kwarg='project_id'
+    form_class=ProjectModelForm
+    success_url=reverse_lazy('project-list')
+
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def form_valid(self, form):
+        project_name = form.cleaned_data.get('name')
+        does_exist=Project.objects.filter(name=project_name).exists()
+        if does_exist:
+            messages.error(self.request,"Project with Same Name already Exists")
+            # to show updated form data -> 
+            return render(self.request, 'project_form.html', self.get_context_data()) 
+            #to show original object form data ->
+            # return redirect('update-project',self.get_object().id) 
+        
+        messages.success(self.request, 'Project Updated Successfully')
+        return super().form_valid(form)
+    
+class DeleteProject(UserPassesTestMixin,DeleteView):
+    model=Project
+    success_url=reverse_lazy('project-list')
+    pk_url_kwarg='project_id'
+
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def form_valid(self, form):
+        messages.success(self.request,"Project Deleted Successfully")
+        return super().form_valid(form)
+    

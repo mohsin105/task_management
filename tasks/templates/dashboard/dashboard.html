@@ -58,7 +58,7 @@
                 </a>
                 <a href="{% url 'manager-dashboard' %}?type=in-progress">
                     <div class="progress_card bg-white p-2 rounded-lg">
-                        <h3 class="card_heading text-sm mb-2">Task In Progress</h3>
+                        <h3 class="card_heading text-lg font-semibold mb-2">Task In Progress</h3>
                         <div class="card_body flex justify-between">
                             <div class="text_side">
                                 <p class="text-xl font-semibold">{{task_count.in_progress}}</p>
@@ -78,7 +78,7 @@
                 </a>
                 <a href="{% url 'manager-dashboard' %}?type=pending">
                     <div class="progress_card bg-white p-2 rounded-lg">
-                        <h3 class="card_heading text-sm mb-2">Todos</h3>
+                        <h3 class="card_heading text-lg font-semibold mb-2">Todos</h3>
                         <div class="card_body flex justify-between">
                             <div class="text_side">
                                 <p class="text-xl font-semibold">{{task_count.pending}}</p>

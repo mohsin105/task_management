@@ -3,7 +3,23 @@
 {% block content %}
 <section class="w-5/6 mx-auto ">
     <h1 class="text-4xl text-center font-bold my-4 ">All Projects</h1>
-    <div class="grid grid-cols-2 p-4 justify-around gap-8 border-1 border-black rounded-md ">
+    <div>
+        {% if messages %}
+            {% for message in messages %}
+                <p class="p-2 border-2 bg-cyan-200 font-bold rounded-sm my-2">
+                    {{message}}
+                </p>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <h2 class="text-2xl font-bold text-center my-4">Porject Count: </h2>
+    <div class="flex justify-end">
+        <a href="{% url 'create-project' %}"
+            class="px-4 py-2 bg-cyan-400 border-2 rounded-md font-bold mb-2">
+            Create Project
+        </a>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 p-4 justify-around gap-8 border-2 border-black rounded-md ">
         {% for project in projects %}
             <div class="border-2 border-violet-700 rounded-xl shadow-2xl p-4">
                 <h3 class="text-xl font-bold my-2">{{project.name}}</h3>
@@ -12,18 +28,28 @@
                     <p class="font-bold">Tasks:</p>
                     <ul>
                         {% for task in project.task_list.all %}
-                        <li>{{task.title}}</li>
+                            <li>{{task.title}}</li>
                         {% endfor %}
                     </ul>
                 </div>
                 <div class="flex justify-start space-x-4 my-2">
                     <button class="px-2 py-1 bg-cyan-400 border-2 rounded-md"
+                        ><a href="">
+                            Details
+                        </a>
+                    </button>
+                    <a  href="{% url 'update-project' project.id %}"
+                        class="px-2 py-1 bg-cyan-400 border-2 rounded-md"
                         >Update
-                    </button>
-                    <button
-                        class="px-2 py-1 bg-red-500 border-2 rounded-md"
-                        >Delete
-                    </button>
+                    </a>
+                    <form action="{% url 'delete-project' project.id %}" method="POST">
+                        {% csrf_token %}
+                        <button
+                            type="submit"
+                            class="px-2 py-1 bg-red-500 border-2 rounded-md"
+                            >Delete
+                        </button>
+                    </form>
                 </div>
             </div>
         {% endfor %}
