@@ -12,7 +12,7 @@ https://docs.djangoproject.com/en/5.1/ref/settings/
 
 from pathlib import Path
 from decouple import config
-# import dj_database_url
+import dj_database_url
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -97,28 +97,28 @@ WSGI_APPLICATION = 'task_management.wsgi.application'
 # }
 
 # for PostGreSQL
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.postgresql',
-        'NAME': config('DB_NAME',default=''),
-        'USER': config('DB_USER',default=''),
-        'PASSWORD': config('DB_PASSWORD',default=''),
-        'HOST': config('DB_HOST',default='localhost'),
-        'PORT': config('DB_PORT',cast=int)
-    }
-}
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': config('DB_NAME',default=''),
+#         'USER': config('DB_USER',default=''),
+#         'PASSWORD': config('DB_PASSWORD',default=''),
+#         'HOST': config('DB_HOST',default='localhost'),
+#         'PORT': config('DB_PORT',cast=int)
+#     }
+# }
 
 
 
 
 # for online DB on render.com
-# DATABASES = {
-#     'default': dj_database_url.config(
-#         # Replace this value with your local database's connection string.
-#         default='postgresql://task_management_db_slnw_user:8qIYeKEH4Wz3nxw5tT9YjdJjMRahpjS2@dpg-cupmsi5umphs73e90n7g-a.oregon-postgres.render.com/task_management_db_slnw',
-#         conn_max_age=600
-#     )
-# }
+DATABASES = {
+    'default': dj_database_url.config(
+        # Replace this value with your local database's connection string.
+        default='postgresql://task_management_db_pc8c_user:B5THNWvVmmZ33UIKsQNVLJliVznrxKpf@dpg-d6bnl03h46gs73brmbdg-a.oregon-postgres.render.com/task_management_db_pc8c',
+        conn_max_age=600
+    )
+}
 
 
 
