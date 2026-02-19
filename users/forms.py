@@ -113,8 +113,15 @@ class CustomRegistrationForm(forms.ModelForm):
 
 #no model is related to this form, hence, normal form
 class AssignRoleForm(forms.Form):
-    role=forms.ModelChoiceField(queryset=Group.objects.all(),
-                                empty_label='Select a role')
+    role=forms.ModelChoiceField(
+        queryset=Group.objects.all(),
+        empty_label='Select a role',
+        widget=forms.Select(
+            attrs={
+                'class':'w-full p-4 my-4 border rounded-md'
+            }
+        )
+    )
 
 #create, update on a model can be done using modelform
 class CreateGroupForm(forms.ModelForm):
@@ -176,7 +183,12 @@ class CustomPasswordChangeForm(PasswordChangeForm): #inherit Mixin here
         })
 
 class CustomPasswordResetForm(PasswordResetForm): #inherit Mixin here
-    pass
+    def __init__(self, *args, **kwargs):
+        super().__init__( *args, **kwargs)
+        self.fields['email'].widget.attrs.update({
+            'placeholder':'Enter your Email',
+            'class':'w-full p-4 border my-4 rounded-md'
+        })
 
 class CustomPasswordResetConfirmForm(SetPasswordForm):#inherit Mixin here
     pass

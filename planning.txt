@@ -6,4 +6,7 @@
     2.1 Project CRUD UI
     2.2 Search By Task Name, Task Priority , Project Name 
     2.3 SideBar Available to all authenticated Pages
-    
+    2.4 Admin, Manager, User authority and scope established
+    2.5 Comment/Review/Audit-update on Task
+    2.6 Ad owner/controller field on each task. Only Admin and owner/controller can delete that task.
+    2.7 

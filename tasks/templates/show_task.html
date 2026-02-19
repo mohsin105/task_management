@@ -1,46 +1,52 @@
-{% extends "dashboard/dashboard.html" %}
+{% extends "base.html" %}
 {% block title %}Task List{% endblock title %}
-{% block tasks %}
-{% comment %} <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>View Task</title>
-</head>
-<body> {% endcomment %}
-
-
-    <ul>
+{% block content %}
+<section class="w-11/12 mx-auto py-4">
+    <h1 class="text-4xl text-center my-8 font-bold">All Tasks</h1>
+    <div>
+        {% if messages %}
+            {% for message in messages %}
+                <p class="p-2 bg-rose-300 rounded-sm my-2 border">
+                    {{message}}
+                </p>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <div>
+        {% include "stats_cards.html" %}
+    </div>
+    <div>
+        {% include "task_list_section.html" %}
+    </div>
+    {% comment %} <ul>
         {% for task in tasks %}
-        <li class="my-8 bg-gray-100 border border-violet-900 shadow-xl rounded-lg p-4">
-            <p class="text-lg font-bold my-2">{{task.title}}</p>
-            <div class="flex justify-between">
-                <div>
-                    <p>
-                        <span class="font-semibold">Project: </span> 
-                        {{task.project.name}}
-                    </p>
-                    <p>
-                        <span class="font-semibold">Description: </span>
-                        {{task.description}}
-                    </p>
+        <a href="{% url 'task-details' task.id %}">
+            <li class="my-8 bg-gray-100 border border-violet-900 shadow-xl rounded-lg p-4">
+                <p class="text-lg font-bold my-2">{{task.title}}</p>
+                <div class="flex justify-between">
+                    <div>
+                        <p>
+                            <span class="font-semibold">Project: </span> 
+                            {{task.project.name}}
+                        </p>
+                        <p>
+                            <span class="font-semibold">Description: </span>
+                            {{task.description}}
+                        </p>
+                    </div>
+                    <div >
+                        <p class="text-blue-950 font-semibold">Assigned To: </p>
+                        <ul class="list-disc">
+                            {% for emp in task.assigned_to.all %}
+                                <li >{{emp.first_name}} {{emp.last_name}}</li>
+                            {% endfor %}
+                        </ul>
+                    </div>
                 </div>
-                <div >
-                    <p class="text-blue-950 font-semibold">Assigned To: </p>
-                    <ul class="list-disc">
-                        {% for emp in task.assigned_to.all %}
-                            <li >{{emp.first_name}} {{emp.last_name}}</li>
-                        {% endfor %}
-                    </ul>
-                </div>
-            </div>
-        </li>
+            </li>
+        </a>
         {% endfor %}
-    </ul>
+    </ul> {% endcomment %}
+</section>
     
-{% endblock tasks %}    
-    
-    
-{% comment %} </body>
-</html> {% endcomment %}
+{% endblock content %}    

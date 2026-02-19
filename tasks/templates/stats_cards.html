@@ -1,0 +1,81 @@
+<section class="progress grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
+    <a href="{% url stats_cards_url %}?type=total">
+        <div class="progress_card bg-white p-2 rounded-lg">
+            <h3 class="card_heading text-lg font-semibold mb-2">Total Task</h3>
+            <div class="card_body flex justify-between">
+                <div class="text_side">
+                    <p class="text-xl font-semibold">{{task_count.total}}</p>
+                    <p class="text-xs">11 last month</p>
+                </div>
+                <div class="icon_side w-7  flex justify-center ">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7  bg-blue-300 p-1.5 rounded-full text-cyan-900">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
+                    </svg>
+                <!-- icon ke padding diye backgournd color apply korsi
+                and border rounded korsi -->
+                <!-- parent div ke flex kore justify content k center e anchi, ete icon center e asche -->
+                </div>
+            </div>
+        </div>
+    </a>
+    <a href="{% url stats_cards_url %}?type=completed">
+        <div class="progress_card bg-white p-2 rounded-lg">
+            <h3 class="card_heading text-lg font-semibold mb-2">Completed Task</h3>
+            <div class="card_body flex justify-between">
+                <div class="text_side">
+                    <p class="text-xl font-semibold">{{task_count.completed}}</p>
+                    <p class="text-xs">11 last month</p>
+                </div>
+                <div class="icon_side w-7  flex justify-center ">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7 p-1.5 bg-emerald-300	rounded-full text-emerald-800">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12.75 11.25 15 15 9.75M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    
+                <!-- icon ke padding diye backgournd color apply korsi
+                and border rounded korsi -->
+                <!-- parent div ke flex kore justify content k center e anchi, ete icon center e asche -->
+                </div>
+            </div>
+        </div>
+    </a>
+    <a href="{% url stats_cards_url %}?type=in-progress">
+        <div class="progress_card bg-white p-2 rounded-lg">
+            <h3 class="card_heading text-lg font-semibold mb-2">Task In Progress</h3>
+            <div class="card_body flex justify-between">
+                <div class="text_side">
+                    <p class="text-xl font-semibold">{{task_count.in_progress}}</p>
+                    <p class="text-xs">11 last month</p>
+                </div>
+                <div class="icon_side w-7  flex justify-center ">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7 p-1.5 rounded-full text-yellow-700 bg-yellow-200 ">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 6v6h4.5m4.5 0a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />
+                    </svg>
+                    
+                <!-- icon ke padding diye backgournd color apply korsi
+                and border rounded korsi -->
+                <!-- parent div ke flex kore justify content k center e anchi, ete icon center e asche -->
+                </div>
+            </div>
+        </div>
+    </a>
+    <a href="{% url stats_cards_url %}?type=pending">
+        <div class="progress_card bg-white p-2 rounded-lg">
+            <h3 class="card_heading text-lg font-semibold mb-2">Todos</h3>
+            <div class="card_body flex justify-between">
+                <div class="text_side">
+                    <p class="text-xl font-semibold">{{task_count.pending}}</p>
+                    <p class="text-xs">11 last month</p>
+                </div>
+                <div class="icon_side w-7  flex justify-center ">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-7  bg-purple-200 p-1.5 rounded-full text-purple-900">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M15.666 3.888A2.25 2.25 0 0 0 13.5 2.25h-3c-1.03 0-1.9.693-2.166 1.638m7.332 0c.055.194.084.4.084.612v0a.75.75 0 0 1-.75.75H9a.75.75 0 0 1-.75-.75v0c0-.212.03-.418.084-.612m7.332 0c.646.049 1.288.11 1.927.184 1.1.128 1.907 1.077 1.907 2.185V19.5a2.25 2.25 0 0 1-2.25 2.25H6.75A2.25 2.25 0 0 1 4.5 19.5V6.257c0-1.108.806-2.057 1.907-2.185a48.208 48.208 0 0 1 1.927-.184" />
+                    </svg>
+                <!-- icon ke padding diye backgournd color apply korsi
+                and border rounded korsi -->
+                <!-- parent div ke flex kore justify content k center e anchi, ete icon center e asche -->
+                </div>
+            </div>
+        </div>
+    </a>
+    
+</section>

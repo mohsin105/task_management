@@ -8,7 +8,7 @@
           <a href="#" class="text-gray-600 hover:text-gray-800">About</a>
           <a href="#" class="text-gray-600 hover:text-gray-800">Contact</a>
         </div>
-        <div class="md:hidden">
+        <div class="md:hidden ">
           <button
             id="menu-toggle"
             class="text-gray-600 hover:text-gray-800 focus:outline-none"
@@ -29,25 +29,25 @@
             </svg>
           </button>
         </div>
-        <div class="flex gap-1">
+        <div class="hidden md:flex gap-1">
           <a
             href="{% url 'sign-in' %}"
-            class="hidden md:block bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+            class=" bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
             >Sign In</a
           >
           <a
             href="{% url 'sign-up' %}"
-            class="hidden md:block bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
+            class=" bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600 transition duration-300"
             >Sign Up</a
           >
         </div>
       </div>
-      <div id="mobile-menu" class="md:hidden hidden mt-4">
-        <a href="#" class="block py-2 text-gray-600 hover:text-gray-800"
-          >Features</a
+      <div id="mobile-menu" class="md:hidden hidden absolute z-50 mt-4 w-full p-4 bg-gray-200">
+        <a href="{% url 'home' %}" class="block py-2 text-gray-600 hover:text-gray-800"
+          >Home</a
         >
         <a href="#" class="block py-2 text-gray-600 hover:text-gray-800"
-          >Pricing</a
+          >Features</a
         >
         <a href="#" class="block py-2 text-gray-600 hover:text-gray-800"
           >About</a
@@ -55,10 +55,10 @@
         <a href="#" class="block py-2 text-gray-600 hover:text-gray-800"
           >Contact</a
         >
-        <a href="#" class="block py-2 text-gray-600 hover:text-gray-800"
+        <a href="{% url 'sign-in' %}" class="block py-2 text-gray-600 hover:text-gray-800"
           >Sign In</a
         >
-        <a href="#" class="block py-2 text-gray-600 hover:text-gray-800"
+        <a href="{% url 'sign-up' %}" class="block py-2 text-gray-600 hover:text-gray-800"
           >Sign Up</a
         >
       </div>

@@ -10,27 +10,31 @@
     <link rel="stylesheet" href="{% static 'css/output.css' %}">
   </head>
   <body class="font-sans bg-gray-100">
-    {% comment %} Including  navbar {% endcomment %}
-    {% if user.is_authenticated %}
-        {% include "logged_nav.html" %}
-    {% else %}
-        {% include "non_logged_nav.html" %}
-    {% endif %}
-    {% comment %} flex min-h-screen {% endcomment %}
     <main class="grid grid-cols-12">
-      {% comment %} SideBar {% endcomment %}
       {% if user.is_authenticated %}
-        <div class="col-span-2 h-screen">
-            {% include "sidebar.html" %}
-        </div>
+        <aside class="hidden md:block col-span-2 h-screen sticky top-0">
+          {% include "sidebar.html" %}
+        </aside>
       {% endif %}
-      {% comment %} Main Content {% endcomment %}
-      <div class="{% if user.is_authenticated %}col-span-10{% else %}col-span-12{% endif %}">
-        {% block content %}
-        
-        {% endblock content %}
-      </div>
+
+      <section class="{% if user.is_authenticated %} col-span-12 md:col-span-10 {% else %} col-span-12 {% endif %}">
+        <div>
+          {% if user.is_authenticated %}
+              {% include "logged_nav.html" %}
+          {% else %}
+              {% include "non_logged_nav.html" %}
+          {% endif %}
+        </div>
+        <div>
+          {% block content %}
+          
+          {% endblock content %}
+        </div>
+      </section>
+
     </main>
+    
+    
 {% comment %} footer {% endcomment %}
     <div class="mt-4">
       {% include "footer.html" %}

@@ -1,0 +1,60 @@
+<section>
+    <div class="all_task_body grid grid-flow-col grid-rows-2 sm:grid-flow-row sm:grid-cols-4 sm:grid-rows-1 gap-1 text-sm md:text-xl font-bold my-4 border rounded-md shadow-2xl p-4">
+        <!-- <div class="task_body_heading"></div> -->
+            <p>TASK TITLE</p>
+            <p>PRIORITY</p>
+            <p>TEAM</p>
+            <p>CREATED AT</p>
+    </div>
+    {% for task in tasks %}
+    <div class="grid grid-flow-col grid-rows-2 sm:grid-flow-row sm:grid-cols-4 sm:grid-rows-1 gap-2 my-4 border-2 border-gray-400 rounded-md shadow-md p-4">
+
+        <div class="flex items-center gap-1 font-semibold text-base">
+            <div class="list_style w-2 h-2 bg-green-600 rounded-full "></div>
+            <a href="{% url 'task-details' task.id %}">{{task.title}}</a>
+        </div>
+        <div class="flex items-center">
+            <div class=" bg-blue-200  px-2 py-1 rounded-md ">
+                <p>{{task.details.get_priority_display}}</p>
+
+            </div>
+        </div>
+        <div class="flex gap-1 text-center -space-x-3 text-white">
+            {% for emp in task.assigned_to.all %}
+                <div class="list_style w-8 h-8 bg-green-600 rounded-full border border-white self-center flex items-center justify-center ">
+                    <p >{{emp.first_name|slice:':2'}}</p>
+                </div>
+            {% endfor %}
+            
+            
+        </div>
+        
+        <div class="flex flex-col sm:flex-row items-center justify-between space-x-2">
+
+            <p>{{task.created_at|timesince}}</p>
+            {% if updateable %}
+            <div class="flex gap-2 font-semibold text-sm flex-wrap">
+                <a 
+                    class="px-2 py-1 bg-cyan-300  rounded-md border-2"
+                    href="{% url 'update-task' task.id %}"
+                    >
+                    Update
+                </a>
+                <form action="{% url 'delete-task' task.id %}" method="POST">
+                    {% csrf_token %}
+                    <button 
+                        type="submit"
+                        class="px-2 py-1 border-2 bg-red-400  rounded-md">
+                        DELETE
+                    </button>
+                </form>
+            </div>
+            {% endif %}
+        </div>
+    </div>
+    {% empty %}
+        <div class="text-xl font-semibold py-4 text-center bg-cyan-100">
+            No Tasks Exists!
+        </div>
+    {% endfor %}
+</section>

@@ -3,6 +3,7 @@ from users.views import sign_up,activate_user,admin_dashboard,group_list,Greetin
 from django.contrib.auth.views import LoginView,LogoutView
 from django.views.generic import TemplateView
 from django.contrib.auth.views import PasswordChangeView,PasswordChangeDoneView
+from tasks.views import AdminViewTask
 
 urlpatterns = [
     path('sign-up/',sign_up,name='sign-up'),
@@ -19,6 +20,7 @@ urlpatterns = [
     path('admin/create-group',CreateGroup.as_view(),name='create-group'),
     # path('admin/group-list/',group_list,name='group-list'),
     path('admin/group-list/',GroupList.as_view(),name='group-list'),
+    path('admin/view-task/',AdminViewTask.as_view(), name='admin-view-task'),
     path('greetings',HiGreetings.as_view(greetings='Kemon acho')),
     # path('profile',TemplateView.as_view(template_name='accounts/profile.html'),name='')
     path('profile',ProfileView.as_view(),name='profile'),

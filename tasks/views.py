@@ -12,6 +12,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin,PermissionRequiredMixi
 from django.views.generic.base import ContextMixin
 from django.views.generic import ListView,DetailView,UpdateView,DeleteView,CreateView
 from django.urls import reverse_lazy
+from datetime import date
 # Create your views here.
 
 #test fr user passes test
@@ -19,7 +20,7 @@ from django.urls import reverse_lazy
 def is_manager(user):
     return user.groups.filter(name='Manager').exists()
 def is_employee(user):
-    return user.groups.filter(name='Employee').exists()
+    return user.groups.filter(name='User').exists()
 
 class CustomUserPassesTestMixin(UserPassesTestMixin):
     pass
@@ -39,14 +40,49 @@ def dashboard(request):
 def employee_dashboard(request):
     return render(request,'dashboard/user_dashboard.html')
 # CBV of employee dashboard
-class Employee_Dashboard(ContextMixin,UserPassesTestMixin,View):
-
+class Employee_Dashboard(UserPassesTestMixin,ListView):
     login_url='no-permission'
     redirect_field_name = 'no-permission'
+    template_name = 'dashboard/user_dashboard.html'
+    model = Task
+    context_object_name='tasks'
+    
     def test_func(self):
-        return self.request.user.groups.filter(name='Employee').exists()
-    def get(self,request,*args,**kwargs):
-        return render(request,'dashboard/user_dashboard.html')
+        return self.request.user.groups.filter(Q(name='User') | Q(name = 'Admin') | Q(name = 'Manager')).exists()
+    
+    
+    # This method didnt work when ContextMixin and View was inherited, instead of ListView
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        userTasks = self.request.user.tasks.all()
+        task_count = userTasks.aggregate(
+            total = Count('id'),
+            completed = Count('id', filter=Q(status = 'COMPLETED')),
+            in_progress = Count('id', filter=Q(status = 'IN_PROGRESS')),
+            pending = Count('id', filter=Q(status = 'PENDING'))
+        )
+        todays_tasks = userTasks.filter(due_date = date.today())
+        
+        context['task_count'] = task_count
+        context['stats_cards_url'] = 'user-dashboard'
+        context['todays_tasks'] = todays_tasks
+        return context
+    
+    def get_queryset(self):
+        userObj = self.request.user
+        type = self.request.GET.get('type')
+        userTasks = userObj.tasks.all()
+
+        if type == 'completed':
+            qs = userTasks.filter(status = 'COMPLETED')
+        elif type == 'in-progress':
+            qs = userTasks.filter(status = 'IN_PROGRESS')
+        elif type == 'pending':
+            qs = userTasks.filter(status = 'PENDING')
+        else:
+            qs = userTasks
+        # return super().get_queryset()
+        return qs
 
 
 
@@ -63,6 +99,8 @@ class ManagerDashboard(ListView):
                                       in_progress=Count('id',filter=Q(status='IN_PROGRESS')),
                                       pending=Count('id',filter=Q(status='PENDING')))
         context['task_count']=task_count
+        context['stats_cards_url'] = 'manager-dashboard'
+        context['updateable']= True
         return context
     
     def get_queryset(self):
@@ -78,6 +116,8 @@ class ManagerDashboard(ListView):
             query_set=base_query.all()
         return query_set
 
+"""CRUD of Task Model--------------->  """
+
 # Create => C of CRUD
 
 #CBV of create_task
@@ -88,9 +128,16 @@ class CreateTask(ContextMixin,LoginRequiredMixin,PermissionRequiredMixin,View):
     permission_required='tasks.add_task'
     # login_url='no-permission'
     login_url='sign-in'
+    permission_denied_message = 'You do not have permission to Create a Task'
 
     #as the mixin classes are inherited, the method_decorator is no longer needed. 
 
+    def handle_no_permission(self):
+        if self.request.user.is_authenticated:
+            messages.error(self.request,"You do not have permission to Create a Task!")
+            return redirect('view-task')
+        return super().handle_no_permission()
+    
     def get_context_data(self, **kwargs):
         context= super().get_context_data(**kwargs)
         context['task_form']=kwargs.get('task_form',TaskModelForm)
@@ -137,9 +184,67 @@ class ViewTask(ListView):
 
     #apply custom queryset
     def get_queryset(self):
-        queryset=Task.objects.select_related('project').prefetch_related('assigned_to').all()
-        return queryset
+        type = self.request.GET.get('type','all')
+        base_query=Task.objects.select_related('project').prefetch_related('assigned_to')
 
+        if type == 'completed':
+            queryset = base_query.filter(status = 'COMPLETED')
+        elif type == 'in-progress':
+            queryset = base_query.filter(status = 'IN_PROGRESS')
+        elif type == 'pending':
+            queryset = base_query.filter(status = 'PENDING')
+        else:
+            queryset=base_query.all()
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        task_count = Task.objects.aggregate(
+            total=Count('id'),
+            completed = Count('id', filter=Q(status='COMPLETED')),
+            in_progress = Count('id', filter=Q(status='IN_PROGRESS')),
+            pending = Count('id', filter=Q(status = 'PENDING'))
+        )
+        context['task_count'] = task_count
+        context['stats_cards_url'] = 'view-task'
+        context['updateable']=False
+        return context
+
+class AdminViewTask(UserPassesTestMixin,ListView):
+    model = Task
+    template_name='admin/task_list.html'
+    context_object_name='tasks'
+
+    def test_func(self):
+        return is_admin(self.request.user)
+    
+    def get_queryset(self):
+        type = self.request.GET.get('type','all')
+        base_query = Task.objects.select_related("details").prefetch_related("assigned_to")
+
+        if type == 'completed':
+            queryset = base_query.filter(status = 'COMPLETED')
+        elif type == 'in-progress':
+            queryset = base_query.filter(status = 'IN_PROGRESS')
+        elif type == 'pending':
+            queryset = base_query.filter(status = 'PENDING')
+        else:
+            queryset = base_query.all()
+        return queryset
+    
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        task_count  = Task.objects.aggregate(
+            total = Count('id'),
+            completed = Count('id', filter=Q(status = 'COMPLETED')),
+            in_progress = Count('id', filter=Q(status = 'IN_PROGRESS')),
+            pending = Count('id', filter=Q(status = 'PENDING'))
+        )
+
+        context['task_count'] = task_count
+        context['stats_cards_url']='admin-view-task'
+        context['updateable'] = True
+        return context
 # Update=> U of CRUD
 
 #CBV of update_task
@@ -221,7 +326,7 @@ class TaskDetail(DetailView):
         task.save()
         return redirect('task-details',task.id)
 
-# Project Model CRUD (only for ADMIN)   
+# Project Model CRUD (only for ADMIN)   -----------------> 
 
 class CreateProject(UserPassesTestMixin,CreateView):
     model=Project

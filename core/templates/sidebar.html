@@ -9,12 +9,12 @@
         >Dashboard
         </a>
         <a 
-            href="#" 
+            href="{% url 'user-dashboard' %}" 
             class="block py-2 px-4 text-gray-700 hover:bg-gray-200"
         >Your Tasks
         </a>
         <a
-            href="#"
+            href="{% url 'profile' %}"
             class="block py-2 px-4 text-gray-700 bg-gray-200 hover:bg-gray-300"
         >Profile
         </a>
@@ -30,7 +30,7 @@
         </a>
         
         <a 
-            href="password-change" 
+            href="{% url 'password-change' %}" 
             class="block py-2 px-4 text-gray-700 hover:bg-gray-200"
         >Change Password
         </a>

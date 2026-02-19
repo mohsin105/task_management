@@ -26,14 +26,14 @@ admin_options =[
         },
         {
             'title':'Tasks',
-            'url':'view-task',
+            'url':'admin-view-task',
         },
         {
             'title':'Users',
             'url':'dashboard',
         },
     ]
-# Create your views here.
+
 
 class Greetings(View):
     greetings="Hello World!"
@@ -48,6 +48,8 @@ class HiGreetings(Greetings):
 def is_admin(user):
     return user.groups.filter(name='Admin').exists()
 
+""" CRUD of User Model ------------->   """
+#Create Operation of User Model -> 
 def sign_up(request):
     if request.method == 'GET':
         form=CustomRegistrationForm()
@@ -58,8 +60,8 @@ def sign_up(request):
             user=form.save(commit=False)
             print(user)
             user.set_password(form.cleaned_data.get('password1'))
-            # user.is_active=False
-            user.is_active=True #email verification on korle eta False koro. and def activate_user view te True koro.
+            user.is_active=False
+            # user.is_active=True #email verification on korle eta False koro. and def activate_user view te True koro.
             print(form.cleaned_data)
             user.save()
 
@@ -96,6 +98,7 @@ def activate_user(reqeust,user_id,token):
         if default_token_generator.check_token(user,token):
             user.is_active=True
             user.save()
+            messages.success(reqeust, "Account Successfully Activated. Please Sign-In")
             return redirect('sign-in')
         else:
             return HttpResponse("Invalid id or token")
@@ -204,6 +207,8 @@ class EditProfileView(UpdateView):
     def form_valid(self,form):
         form.save()
         return redirect('profile')
+
+#Password Change and Reset Views ------------> 
 
 
 class ChangePassword(PasswordChangeView):

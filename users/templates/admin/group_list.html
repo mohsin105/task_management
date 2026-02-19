@@ -1,18 +1,15 @@
 {% extends "admin/dashboard.html" %}
 {% block admin_content %}
-      <div class="flex items-center w-2/3 mx-auto">
+      <div class="flex items-center w-11/12 md:w-2/3 mx-auto">
         
         <h2 class="mx-auto text-2xl font-bold my-4">Groups and Permissions</h2>
-        
-        <button class="">
-          <a 
-            href="{% url 'create-project' %}"
-            class="px-4 py-2 bg-cyan-500 border-2 rounded-md">
-            Create Group
-          </a>
-        </button>
+        <a 
+          href="{% url 'create-group' %}"
+          class="px-4 py-2 bg-cyan-500 border-2 rounded-md">
+          <button>Create Group</button>
+        </a>
       </div>
-      <div class="overflow-x-auto w-2/3 mx-auto">
+      <div class="overflow-x-auto w-11/12  md:w-2/3 mx-auto">
         <table class="table-auto w-full border-collapse border border-gray-300">
           <thead>
             <tr class="bg-gray-100">
